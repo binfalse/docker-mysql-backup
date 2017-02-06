@@ -10,11 +10,11 @@ Clone the [Docker MySQL-Backup repository:](https://github.com/binfalse/docker-m
 
     git clone https://github.com/binfalse/docker-mysql-backup.git
 
-Copy the backup script to the `cron.daily` directory on your system:
+Copy the backup script to the `cron.daily` (most likely `/etc/cron.daily/`) directory on your system:
 
-    cp docker-mysql-backup/docker-mysql-backup /etc/cron.daily/docker-mysql-backup
+    cp docker-mysql-backup/etc/cron.daily/docker-mysql-backup /etc/cron.daily/docker-mysql-backup
 
-Copy the configuration to `/etc/default/docker-mysql-backup`:
+Copy the configuration to `/etc/default/`:
 
     cp docker-mysql-backup/etc/default/docker-mysql-backup /etc/default/docker-mysql-backup
 
