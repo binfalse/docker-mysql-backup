@@ -1,0 +1,13 @@
+# Where to put store the backup? This will create a sub directory for every
+# running containers and stores the backups gzip'ed with a time stamp.
+#
+# Default: /srv/backup/mysql/
+BACKUP_BASE="/srv/backup/mysql/"
+
+
+# Where is the gzip on your system?
+#
+# Defaults to /bin/gzip
+GZIP="/bin/gzip"
+
+
