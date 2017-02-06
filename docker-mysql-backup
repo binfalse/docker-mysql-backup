@@ -1,0 +1,23 @@
+#!/bin/bash
+
+
+BACKUP_BASE="/srv/backup/mysql/"
+GZIP="/bin/gzip"
+NOW=$(date +"%Y-%m-%d_%H-%M")
+
+[ -e etc/default/docker-mysql-backup ] && source etc/default/docker-mysql-backup
+
+
+for container in $(docker ps --format '{{.Names}}\t{{.Image}}'  | /bin/grep '\smysql' | awk '{print $1}')
+do
+    BACKUP_DIR="${BACKUP_BASE}/docker_${container}"
+    mkdir -p "${BACKUP_DIR}"
+    docker exec "$container" sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD"' | ${GZIP} -9 > "${BACKUP_DIR}/${NOW}_complete.sql.gz"
+
+    # delete all that are older than 30 days and the date does not end with a 2 -> keep ~3 per month
+    for file in $(find $BACKUP_DIR -mtime +30 | grep -v '20..-..-.2_')
+    do
+        rm $file
+    done
+
+done
