@@ -23,7 +23,7 @@ BACKUP_BASE="/srv/backup/mysql/"
 GZIP="/bin/gzip"
 NOW=$(date +"%Y-%m-%d_%H-%M")
 
-[ -e etc/default/docker-mysql-backup ] && source etc/default/docker-mysql-backup
+[ -e "/etc/default/docker-mysql-backup" ] && source "/etc/default/docker-mysql-backup"
 
 
 for container in $(docker ps --format '{{.Names}}\t{{.Image}}'  | /bin/grep '\smysql' | awk '{print $1}')
