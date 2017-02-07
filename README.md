@@ -10,17 +10,17 @@ Clone the [Docker MySQL-Backup repository:](https://github.com/binfalse/docker-m
 
     git clone https://github.com/binfalse/docker-mysql-backup.git
 
-Copy the backup script to the `cron.daily` (most likely `/etc/cron.daily/`) directory on your system:
+Copy the [backup script](etc/cron.daily/docker-mysql-backup) to the `cron.daily` (most likely `/etc/cron.daily/`) directory on your system:
 
     cp docker-mysql-backup/etc/cron.daily/docker-mysql-backup /etc/cron.daily/docker-mysql-backup
 
-Copy the configuration to `/etc/default/`:
+Copy the [configuration](etc/default/docker-mysql-backup) to `/etc/default/`:
 
     cp docker-mysql-backup/etc/default/docker-mysql-backup /etc/default/docker-mysql-backup
 
 ### Install from my Apt repository
 
-If you're running a Debian-based system you may want to [use my apt-repository to install the Docker MySQL-Backup tool.] In that case you just need to run
+If you're running a Debian-based system you may want to [use my apt-repository to install the Docker MySQL-Backup tool.](https://binfalse.de/software/apt-repo/) In that case you just need to run
 
     aptitude install bf-docker-mysql-backup
 
@@ -29,6 +29,7 @@ Afterwards, look into `/etc/default/docker-mysql-backup` for configuration optio
 ## How does that work?
 
 You'll find [an article with detailed information on the Docker MySQL-Backup tool in my blog.](https://binfalse.de/2017/02/06/docker-mysql-backup/)
+I strongly recommend to read that article before deploying the tool.
 
 ## Licence
 
