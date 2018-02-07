@@ -1,6 +1,6 @@
 # Docker MySQL-Backup
 
-A tool to automatically dump running MySQL databases in Docker containers.
+A tool to automatically dump running [MySQL](https://www.mysql.com/) and [MariaDB](https://mariadb.org/) databases in Docker containers.
 
 ## Installation
 
