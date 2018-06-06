@@ -29,3 +29,11 @@ BACKUP_BASE="/srv/backup/mysql/"
 # Defaults to /bin/gzip
 GZIP="/bin/gzip"
 
+
+# Should every database also be backupped manually? (In addition to a full backup)
+# The databases `information_schema` and `performance_schema` will still be ignored.
+#   1 = yes
+#   0 = no
+#
+# Defaults to 1
+INDIVIDUAL_DBS=1

@@ -22,6 +22,7 @@
 BACKUP_BASE="/srv/backup/mysql/"
 GZIP="/bin/gzip"
 NOW=$(date +"%Y-%m-%d_%H-%M")
+INDIVIDUAL_DBS=1
 
 [ -e "/etc/default/docker-mysql-backup" ] && source "/etc/default/docker-mysql-backup"
 
@@ -31,6 +32,18 @@ do
     BACKUP_DIR="${BACKUP_BASE}/docker_${container}"
     mkdir -p "${BACKUP_DIR}"
     docker exec "$container" sh -c 'if [ "$MYSQL_ROOT_PASSWORD_FILE" ]; then MYSQL_ROOT_PASSWORD=`cat $MYSQL_ROOT_PASSWORD_FILE`; fi; exec mysqldump --all-databases -f -uroot -p"$MYSQL_ROOT_PASSWORD"' | ${GZIP} -9 > "${BACKUP_DIR}/${NOW}_complete.sql.gz"
+
+    if [ "$INDIVIDUAL_DBS" -eq 1 ]
+    then
+        DBS=$(docker exec "$container" sh -c 'if [ "$MYSQL_ROOT_PASSWORD_FILE" ]; then MYSQL_ROOT_PASSWORD=`cat $MYSQL_ROOT_PASSWORD_FILE`; fi; exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -Bse "show databases"')
+        for db in $DBS
+        do
+                [ "$db" == "information_schema" ] && continue
+                [ "$db" == "performance_schema" ] && continue
+                docker exec "$container" sh -c 'if [ "$MYSQL_ROOT_PASSWORD_FILE" ]; then MYSQL_ROOT_PASSWORD=`cat $MYSQL_ROOT_PASSWORD_FILE`; fi; exec mysqldump -f -uroot -p"$MYSQL_ROOT_PASSWORD" '"$db" | ${GZIP} -9 > "${BACKUP_DIR}/${NOW}_${db}.sql.gz"
+        done
+    fi
+
 
     # delete all that are older than 30 days and the date does not end with a 2 -> keep ~3 per month
     for file in $(find $BACKUP_DIR -mtime +30 | grep -v '20..-..-.2_')
