@@ -32,7 +32,8 @@ INDIVIDUAL_DBS=1
 
 for container in $(docker ps --format '{{.Names}}\t{{.Image}}'  | /bin/grep '\s\(mysql\|mariadb\)' | awk '{print $1}')
 do
-    BACKUP_DIR="${BACKUP_BASE}/docker_${container}"
+    CONTAINER_NAME=`echo ${container} | cut -d'.' -f1`
+    BACKUP_DIR="${BACKUP_BASE}/docker_${CONTAINER_NAME}"
     mkdir -p "${BACKUP_DIR}"
     docker exec "$container" sh -c 'exec mysqldump --all-databases -f -u $MYSQL_USER -p"$MYSQL_PASSWORD"' | ${GZIP} -9 > "${BACKUP_DIR}/${NOW}_complete.sql.gz"
 
