@@ -31,16 +31,16 @@ for container in $(docker ps --format '{{.Names}}\t{{.Image}}'  | /bin/grep '\s\
 do
     BACKUP_DIR="${BACKUP_BASE}/docker_${container}"
     mkdir -p "${BACKUP_DIR}"
-    docker exec "$container" sh -c 'if [ "$MYSQL_ROOT_PASSWORD_FILE" ]; then MYSQL_ROOT_PASSWORD=`cat $MYSQL_ROOT_PASSWORD_FILE`; fi; exec mysqldump --all-databases -f -uroot -p"$MYSQL_ROOT_PASSWORD"' | ${GZIP} -9 > "${BACKUP_DIR}/${NOW}_complete.sql.gz"
+    docker exec "$container" sh -c 'if [ "$MYSQL_ROOT_PASSWORD_FILE" ]; then MYSQL_ROOT_PASSWORD=`cat $MYSQL_ROOT_PASSWORD_FILE`; fi; MYSQL_PWD="$MYSQL_ROOT_PASSWORD" exec mysqldump --all-databases -f -uroot' | ${GZIP} -9 > "${BACKUP_DIR}/${NOW}_complete.sql.gz"
 
     if [ "$INDIVIDUAL_DBS" -eq 1 ]
     then
-        DBS=$(docker exec "$container" sh -c 'if [ "$MYSQL_ROOT_PASSWORD_FILE" ]; then MYSQL_ROOT_PASSWORD=`cat $MYSQL_ROOT_PASSWORD_FILE`; fi; exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -Bse "show databases"')
+        DBS=$(docker exec "$container" sh -c 'if [ "$MYSQL_ROOT_PASSWORD_FILE" ]; then MYSQL_ROOT_PASSWORD=`cat $MYSQL_ROOT_PASSWORD_FILE`; fi; MYSQL_PWD="$MYSQL_ROOT_PASSWORD" exec mysql -uroot -Bse "show databases"')
         for db in $DBS
         do
                 [ "$db" == "information_schema" ] && continue
                 [ "$db" == "performance_schema" ] && continue
-                docker exec "$container" sh -c 'if [ "$MYSQL_ROOT_PASSWORD_FILE" ]; then MYSQL_ROOT_PASSWORD=`cat $MYSQL_ROOT_PASSWORD_FILE`; fi; exec mysqldump -f -uroot -p"$MYSQL_ROOT_PASSWORD" '"$db" | ${GZIP} -9 > "${BACKUP_DIR}/${NOW}_${db}.sql.gz"
+                docker exec "$container" sh -c 'if [ "$MYSQL_ROOT_PASSWORD_FILE" ]; then MYSQL_ROOT_PASSWORD=`cat $MYSQL_ROOT_PASSWORD_FILE`; fi; MYSQL_PWD="$MYSQL_ROOT_PASSWORD" exec mysqldump -f -uroot '"$db" | ${GZIP} -9 > "${BACKUP_DIR}/${NOW}_${db}.sql.gz"
         done
     fi
 
